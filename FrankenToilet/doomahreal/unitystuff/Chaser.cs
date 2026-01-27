@@ -1,7 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Chaser : MonoBehaviour
 {
+    public static Chaser? Instance { get; private set; }
+
     public float distanceFromTarget = 1000f;
     public float stopDistance = 5f;
     public float acceleration = 2f;
@@ -16,6 +18,16 @@ public class Chaser : MonoBehaviour
     bool minigameSpawned;
     AudioSource source;
     Transform target;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
 
     void Start()
     {

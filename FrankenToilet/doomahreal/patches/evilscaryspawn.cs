@@ -24,7 +24,12 @@ public static class Startlevelpatch
 
         var bundle = IMLOADINGITSOHARDDDD.thegrundle;
         GameObject? prefab = bundle.LoadAsset<GameObject>("Assets/Custom/imfrakeninmykill/evilscary/round start canvas/EvilScary 1.prefab");
-            
+
+        // evil scary could spawn camp you so delete chaser 
+
+        if (Chaser.Instance != null)
+            Object.Destroy(Chaser.Instance.gameObject);
+
         Object.Instantiate(prefab);
         _evilStartCounter = 0;
     }

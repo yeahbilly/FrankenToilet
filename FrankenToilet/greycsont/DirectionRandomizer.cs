@@ -7,7 +7,7 @@ namespace FrankenToilet.greycsont;
 
 public static class DirectionRandomizer
 {
-    private static int randomDirection;
+    public static int randomDirection;
     
     public static void GenerateRandomDirection() => randomDirection = Random.Range(0, 4);
     
@@ -51,7 +51,7 @@ public static class DirectionRandomizer
 public enum Direction
 {
     Backwards = 0,
-    Upwards = 1,
-    Left = 2,
+    Left = 1,
+    Upwards = 2,
     Right = 3
 }

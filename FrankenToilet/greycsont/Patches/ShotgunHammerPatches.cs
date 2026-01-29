@@ -19,9 +19,14 @@ public static class ShotgunHammerPatch
     
     private static readonly MethodInfo DeliverDamage = AccessTools.Method(typeof(ShotgunHammer), nameof(ShotgunHammer.DeliverDamage));
 
+
     [HarmonyPrefix]
     [HarmonyPatch(nameof(ShotgunHammer.Impact))]
-    public static void GenerateRandomDirection() => DirectionRandomizer.GenerateRandomDirection();
+    public static void ImpactPatch(ShotgunHammer __instance)
+    {
+        HammerTracker.lastActiveHammer = __instance;
+        DirectionRandomizer.GenerateRandomDirection();
+    } 
     
     
     [HarmonyTranspiler]
@@ -39,5 +44,11 @@ public static class ShotgunHammerPatch
         
         return matcher.InstructionEnumeration();
     }
+}
+
+
+public static class HammerTracker
+{
+    public static ShotgunHammer lastActiveHammer;
 }
 

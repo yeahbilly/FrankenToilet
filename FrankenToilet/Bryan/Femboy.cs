@@ -22,11 +22,14 @@ public class Femboy
         SceneManager.sceneLoaded += (_, _) =>
         {
             fuckText = Random.Range(0, 4) == 0;
-            if (SceneHelper.CurrentScene == "Main Menu") 
+            if (SceneHelper.CurrentScene == "Main Menu")
                 FindObject<Image>("Canvas/Main Menu (1)/LeftSide/Title").sprite = BundleLoader.ulakill;
 
             if (SceneHelper.CurrentScene == "Level 0-1")
                 FindObject<Image>("Canvas/HurtScreen/Title Sound/Image").sprite = BundleLoader.UlraKil;
+
+            if (SceneHelper.CurrentScene == "Level 7-1")
+                FindObject<Image>("Canvas/HurtScreen/White").sprite = BundleLoader.Flash;
         };
     }
 
@@ -43,6 +46,6 @@ public class Femboy
 
         var search = scene.Value.GetRootGameObjects().Where(g => g.name == rootSearchObj).FirstOrDefault();
         search = Path.IndexOf('/') == -1 ? search : search.transform.Find(Path)?.gameObject;
-        return search.GetComponent<T>();
+        return search?.GetComponent<T>();
     }
 }

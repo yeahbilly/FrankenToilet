@@ -8,8 +8,11 @@ using UnityEngine.UI;
 
 /// <summary> Class for setting up my part of this mod (oh god) </summary>
 [EntryPoint]
-public class Plugin
+public class Femboy
 {
+    /// <summary> Whether to fuck tghe text (used in TextFucker) </summary>
+    public static bool fuckText = false;
+
     /// <summary> why did i sign up for this </summary>
     [EntryPoint]
     public static void Awake()
@@ -18,6 +21,7 @@ public class Plugin
 
         SceneManager.sceneLoaded += (_, _) =>
         {
+            fuckText = Random.Range(0, 4) == 0;
             if (SceneHelper.CurrentScene == "Main Menu") 
                 FindObject<Image>("Canvas/Main Menu (1)/LeftSide/Title").sprite = BundleLoader.ulakill;
 

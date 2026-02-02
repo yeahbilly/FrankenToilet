@@ -11,11 +11,16 @@ using UnityEngine.UI;
 [HarmonyPatch(typeof(TextMeshProUGUI))]
 public static class TextMeshProUGUIPatch
 {
-    /// <summary> Replace font with sand </summary>
+    /// <summary> Replace font with sand + fucker </summary>
     [HarmonyPrefix]
-    [HarmonyPatch("Awake")]
-    public static void ChangeFont(TextMeshProUGUI __instance) =>
+    [HarmonyPatch("Awake")] [HarmonyPatch("OnEnable")]
+    public static void ChangeFontAndFUck(TextMeshProUGUI __instance)
+    { 
         __instance.font = BundleLoader.ComicSands ?? __instance.font;
+        
+        if (__instance.gameObject.GetComponent<TextFucker>() == null)
+            __instance.gameObject.AddComponent<TextFucker>();
+    }
 }
 
 /// <summary> Patch Text components (legacy text components) to make them funky. </summary>
@@ -23,9 +28,14 @@ public static class TextMeshProUGUIPatch
 [HarmonyPatch(typeof(Text))]
 public static class LegacyTextPatch
 {
-    /// <summary> Replace font with sand </summary>
+    /// <summary> Replace font with sand + fuck them </summary>
     [HarmonyPrefix]
     [HarmonyPatch("OnEnable")]
-    public static void ChangeFont(Text __instance) =>
+    public static void ChangeFontAndFuck(Text __instance)
+    {
         __instance.font = BundleLoader.ComicSandsLegacy ?? __instance.font;
+
+        if (__instance.gameObject.GetComponent<TextFucker>() == null) 
+            __instance.gameObject.AddComponent<TextFucker>();
+    }
 }

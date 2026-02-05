@@ -24,6 +24,11 @@ public class Popup : MonoBehaviour
             source.Play();
         }
 
+        if (Popups.RenderTextures.TryGetValue(Parent, out var renderTexture))
+        {
+            renderTexture.Release();
+            Popups.RenderTextures.Remove(Parent);
+        }
 
         DestroyObject(Parent);
     }

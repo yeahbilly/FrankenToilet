@@ -15,7 +15,12 @@ public static class Popups
 {
     private static GameObject MainPrefab;
     private static List<VideoClip> VideoClips = new List<VideoClip>();
+    
+    private static RenderTexture BaseRenderTexture;
+    public static Dictionary<GameObject, RenderTexture> RenderTextures = new Dictionary<GameObject, RenderTexture>();
+
     public static AudioClip VideoCloseSound;
+
 
     public static void Init()
     {
@@ -29,6 +34,8 @@ public static class Popups
 
         MainPrefab = AssetsController.LoadAsset<GameObject>("assets/aizoaizo/popup.prefab");
         MainPrefab.SetActive(false);
+
+        BaseRenderTexture = AssetsController.LoadAsset<RenderTexture>("assets/aizoaizo/videotexture.rendertexture");
 
         VideoCloseSound = AssetsController.LoadAsset<AudioClip>("assets/aizoaizo/pum.ogg");
         for (int i = 1; i <= 19; i++)
@@ -48,9 +55,22 @@ public static class Popups
         {
             VideoClips.Shuffle();
 
-            GameObject go = SpawnPopup(VideoClips[0]);
-            
-            yield return new WaitForSeconds(((float)VideoClips[0].length) * 7);
+            if (AssetsController.IsSlopSafe)
+            {
+                SpawnPopup(VideoClips[0]);
+                SpawnPopup(VideoClips[1]);
+                SpawnPopup(VideoClips[2]);
+                
+                yield return new WaitForSeconds(((float)VideoClips[0].length) * 3);
+            }
+            else
+            {
+                SpawnPopup(VideoClips[0]);
+                SpawnPopup(VideoClips[1]);
+
+                yield return new WaitForSeconds(((float)VideoClips[0].length) * 7);
+            }
+
         }
 
         yield return null;
@@ -61,10 +81,18 @@ public static class Popups
         GameObject go = UnityEngine.Object.Instantiate(MainPrefab);
         go.SetActive(true);
 
-        VideoPlayer videoPlayer = go.GetComponentInChildren<VideoPlayer>();
-        RawImage rawImage = go.GetComponentInChildren<RawImage>();
+        RenderTexture renderTexture = new RenderTexture(BaseRenderTexture);
+        renderTexture.Create();
 
+        RenderTextures.Add(go, renderTexture);
+
+        VideoPlayer videoPlayer = go.GetComponentInChildren<VideoPlayer>();
+        videoPlayer.targetTexture = renderTexture;
+        
+        RawImage rawImage = go.GetComponentInChildren<RawImage>();
         rawImage.rectTransform.sizeDelta = new Vector2(videoClip.width, videoClip.height);
+        rawImage.texture = renderTexture;
+
         Popup pu = rawImage.gameObject.AddComponent<Popup>();
         pu.Parent = go;
         pu.CloseSound = VideoCloseSound;
@@ -77,6 +105,14 @@ public static class Popups
 
         videoPlayer.prepareCompleted += (vp) => 
         {
+            Texture tex = vp.texture;
+            if (tex != null && tex.width > 0 && tex.height > 0)
+            {
+                // if UI is screen-space, use pixels
+                rawImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tex.width);
+                rawImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tex.height);
+            }
+
             Vector3 dir = Random.onUnitSphere;
             Vector3 pos = dir.normalized * 512.0f;
 

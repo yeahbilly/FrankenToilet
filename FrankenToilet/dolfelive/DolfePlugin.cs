@@ -68,6 +68,7 @@ public class DolfePlugin
         
         SceneManager.sceneLoaded += (_, _) =>
         {
+            PatchClass.graceTime = 40f;
             Canvas? canvas = GameObject.Find("/Canvas")?.GetComponent<Canvas>();
             if (canvas != null)
             {
@@ -130,28 +131,29 @@ public class DolfePlugin
 [PatchOnEntry]
 public static class PatchClass
 {
-    private static float graceTime = 40f;
+    public static float graceTime = 40f;
     private const float lessTime = 0f; //115f 
     
     #if DEBUG
-    [Patch(typeof(Bootstrap), "Start", AT.REDIRECT, "SceneHelper.LoadScene", occurrence: 3)]
+    // [Patch(typeof(Bootstrap), "Start", AT.REDIRECT, "SceneHelper.LoadScene", occurrence: 3)]
     public static void SceneRedirect(string sceneName, bool noblocker = false)
     {
         SceneHelper.LoadScene("Level 6-2", noblocker);
     }
-    #endif
     
-    [Patch(typeof(Bootstrap), "Start", AT.REDIRECT, "ILogger::set_filterLogType", occurrence: 0)]
+    // [Patch(typeof(Bootstrap), "Start", AT.REDIRECT, "ILogger::set_filterLogType", occurrence: 0)]
     public static void StopBlockingLogz(ILogger logger, LogType logType)
     {
         LogHelper.LogDebug($"Prevented log suppression: {logType}");
     }
+    #endif
     
     [Patch(typeof(StatsManager), "Update", AT.RETURN)]
     public static void SecondsInc(float ___seconds)
     {
         if (DolfePlugin.countdown != null && !DolfePlugin.countdown._sinSpawned)
         {
+            // ReSharper disable once RedundantCast
             DolfePlugin.countdown.timeLeft = ((float)(DolfePlugin.sRankTime - lessTime ?? 9999f) - ___seconds) + graceTime;
         }
     }
